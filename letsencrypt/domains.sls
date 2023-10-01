@@ -89,22 +89,6 @@ create-initial-cert-{{ setname }}-{{ domainlist | join('+') }}:
       {% endif %}
       - file: letsencrypt-config
 
-letsencrypt-crontab-{{ setname }}-{{ domainlist[0] }}:
-  cron.{{ old_cron_state }}:
-    - name: {{ renew_cert_cmd }} {{ domainlist|join(' ') }}
-    - month: '*'
-    - minute: '{{ letsencrypt.cron.minute }}'
-    - hour: '{{ letsencrypt.cron.hour }}'
-    - dayweek: '{{ letsencrypt.cron.dayweek }}'
-    - identifier: letsencrypt-{{ setname }}-{{ domainlist[0] }}
-    - require:
-      - cmd: create-initial-cert-{{ setname }}-{{ domainlist | join('+') }}
-      {% if letsencrypt.install_method == 'package' %}
-      - pkg: letsencrypt-client
-      {% else %}
-      - file: {{ renew_cert_cmd }}
-      {% endif %}
-
 create-fullchain-privkey-pem-for-{{ setname }}:
   cmd.run:
     - name: |
